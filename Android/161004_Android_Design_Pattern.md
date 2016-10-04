@@ -1,10 +1,5 @@
 
 
-#Journey for developing MapSee mobile Application#
-
-----------
-
-
     
 ##1. MVP model ##
 
