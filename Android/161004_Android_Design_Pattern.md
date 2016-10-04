@@ -67,13 +67,39 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
 ```
 즉 위와 같이, signUpView를 implement한 SignUpActivity 에서는, signUpButtonEnable 메소드, 즉 signUp 버튼을 클릭 가능한 형태로 만들어주는 함수가 구현되기로 약속한 것이다. 
 
-그렇다면 MVP모델에서는 왜 이러한 약속(인터페이스)이 필요할까? 먼저, 인터페이스라는 이름에 그 답이 있다. 인터페이스라는 것은 서로 다른 두 시스템이 연결되는 곳이다. 그 연결이 제대로 된 기능을 하기 위해서는, 우리는 여러 약속을 정하게 된다.  마치 한 컴퓨터와 다른 단말사이의 원격 통신을 하기 위해, 주고 받을 자료의 형식과 오류 검출 방식 등을 정하는 프로토콜 처럼, 우리는  그 클래스를 제외한 다른 클래스에서 호출할 메소드를 미리 약속 해놓는 것이다. 
+그렇다면 MVP모델에서는 왜 이러한 약속(인터페이스)이 필요할까? 먼저, 인터페이스라는 이름에 그 답이 있다. 인터페이스라는 것은 서로 다른 두 시스템이 연결되는 곳이다. 그 연결이 제대로 된 기능을 하기 위해서, 우리는 여러 약속을 정하게 된다. 한 컴퓨터와 다른 단말사이의 원격 통신을 하기 위해, 주고 받을 자료의 형식과 오류 검출 방식 등을 정하는 프로토콜과 비슷한 개념이라고 생각하면 쉽다.
 
-두번째로,  각 클래스의 월권행위를 방지하기 위해서이다. 즉, 사용하기로 약속된 메소드만 사용할 수 있도록 한다. 이는 다음과 같이 구현 가능하다. 
+위의 예제로부터 좀 더 실질적인 통찰을 얻어보자. 만약 SignUpActivity 외부에서,  SignUpActivity 내의 sign_up 버튼이 눌러질 수 있는 상태가 되기를 바란다고 하자. 그런데 이러한 인터페이스가 없다면, SignUpActivity 가  sign up 버튼을 enable하는 메소드를 구현하기는 했는지, 했다면 어떤 메소드 명으로 그 메소드를 호출해야하는지 당최 알 수가 없다. 
+그렇지만 만약,  signUpActivity가 signUpView 를 implement했다는 사실을 알게 된다면, 안심하고 외부에서 SignUpActivity의 enableSignUpButton(true) 를 호출함으로써 요청을 간편하게 할 수 있게 된다.
+
+ 이러한 약속이 빛을 발하는 때는, 아직 SignUpActivity 가 구현이 되지 않은 상황에서도 마치 그 메소드가 구현이 된 것처럼 코드를 짤 수 있다는 것이다.  즉, 다음과 같이 SignUpPresenter 를 구현할 수 있다.
+
 ``` java
-public class employer{
-	
-	
+public class SignUpPresenter {
+
+    private SignUpView signUpView;
+    
+    public void updateID(String ID) {
+       if(ID.length > 5) //적합한 ID인지 판별
+       {signUpView.enableSignUpButton(true) }
+       else{signUpView.enableSignUpButton(false);}
+}
+
+```
+즉, 위 코드에서 볼 수 있는 바와 같이 비록 아직 enableSignUpButton()이 구현되지 않은 상태라고 하더라도, 이와 같이 Presenter의 로직을 완성할 수 있다. 
+ ( 물론  enableSignUpButton() 메소드 구현이 완료된 상태에서도 어떻게 구현했는지에 상관없이 Presenter의 로직에만 집중해서 개발할 수 있다!)
+
+두번째로,  각 interface 를 사용하면 클래스의 월권행위를 방지할 수 있다. 다시말해, 사용하기로 약속된 메소드만 사용할 수 있도록 할 수 있다.
+
+``` java
+public class SignUpPresenter {
+
+    private SignUpView signUpView;
+    
+    public void updateID(String ID) {
+       if(ID.length > 5) //적합한 ID인지 판별
+       {signUpView.enableSignUpButton(true) }
+       else{signUpView.enableSignUpButton(false);}
 }
 ```
 
