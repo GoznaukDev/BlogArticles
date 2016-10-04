@@ -72,7 +72,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
 위의 예제코드로부터 좀 더 실질적인 통찰을 얻어보자. 만약 SignUpActivity 외부에서,  SignUpActivity 내의 sign_up 버튼이 눌러질 수 있는 상태가 되기를 바란다고 하자. 그런데 이러한 인터페이스가 없다면, SignUpActivity 가  sign up 버튼을 enable하는 메소드를 구현하기는 했는지, 했다고 추측한다해도 어떤 메소드 명으로 그 메소드를 호출해야하는지 당최 알 수가 없다. 
 그렇지만 만약,  signUpActivity가 signUpView 를 implement했다는 사실을 알게 된다면, 안심하고 외부에서 SignUpActivity의 enableSignUpButton(true) 를 호출함으로써 요청을 간편하게 할 수 있게 된다.
 
- 이러한 약속이 빛을 발하는 때는, 아직 SignUpActivity 가 구현이 되지 않은 상황에서도 마치 그 메소드가 구현이 된 것처럼 코드를 짤 수 있다는 것이다.  즉, 다음과 같이 SignUpPresenter 를 구현할 수 있다.
+ 또한 그 외에 인터페이스에 정의된 약속이 빛을 발하는 때는  메소드 구현이 되지 않은 상황에서도 마치 그 메소드가 구현 된 것처럼 코드를 짤 수 있을 때이다. 이 상황은 다음과 같이 SignUpPresenter 코드에서 확인할 수 있다.
 
 ``` java
 public class SignUpPresenter {
