@@ -2,12 +2,6 @@
 
 #Journey for developing MapSee mobile Application#
 
-
-```java
-public static void main(){
-}
-```
-
 ----------
 
 
