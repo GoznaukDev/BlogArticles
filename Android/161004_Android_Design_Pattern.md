@@ -65,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
 	}
 }
 ```
-즉 위와 같이, signUpView를 implement한 SignUpActivity 에서는,  인터페이스에서 
+즉 위와 같이, signUpView를 implement한 SignUpActivity 에서는, 
 
 그렇다면 MVP모델에서는 왜 이러한 약속(인터페이스)이 필요한가? 첫번째로, 각 클래스의 월권행위를 방지하기 위해서이다. 즉, 사용하기로 약속된 메소드만 사용할 수 있도록 한다. 이는 다음과 같이 구현 가능하다. 
 ``` java
