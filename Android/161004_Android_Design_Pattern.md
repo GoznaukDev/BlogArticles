@@ -9,7 +9,7 @@
 이와 같은 분배를 효율적으로 하기 위해서는, 기능 단위로 책임을 분배하고 각 부분에서 월권행위를 하지 않을 수 있도록 여러 장치를 마련해 주는 것이 좋다.
 
     
-이러한 효율적인 분배에 대한 설계의 노하우가 축적된 것이 MVC, MVVM, MVP 과 같은 **디자인패턴**[^designPattern]인데, 우리는 MapSee 어플리케이션의 구현을 위해 MVP를 이용할 것이다.
+이러한 효율적인 분배에 대한 설계의 노하우가 축적된 것이 MVC, MVVM, MVP 과 같은 **디자인패턴**[^designPattern]인데, 우리는 여기서 MVP에 대하여 알아보도록 하자.
 
 
 
@@ -123,10 +123,89 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
     }
 }
 ```
-답을 발견했는가? 답은 signUpPresenter = new SignUpPresenter(this);에서  확인할 수 있다. 여기서는 그 interface 를 구현한 SignUpActivity 의 객체 자신의 reference 가  인자로 가서, signUpView의 참조변수가 이를 가리킬 수 있게 된다. 
+답을 발견했는가? 답은 signUpPresenter = new SignUpPresenter(this);에서  확인할 수 있다. 여기서는 그 interface 를 구현한 SignUpActivity 의 객체 자신의 reference variable 이 전달 되는 것을 볼 수 있다.
+
+이렇게 되면, **presenter 에서는 signUpView 형의 참조변수를 이용하여 signUpAcitivity 의 인스턴스를 핸들할 수 있게 된다.** (_이것이 가능한 이유는 signUpActivity 가 signUpView를 implement 했기 떄문이다.  특정 타입의 참조변수는 완전히 다른 클래스타입의 객체를 핸들할 수 없다 상속하거나 그 인터페이스를 구현한 경우는 된다!_)
+
+간단한 예를 통해,  이를 이해해보도록 하자.
+``` java
+public interface A {} // in A.java
+public class B {}  // in B.java
+public class Main {  // in Main.java
+
+  public static void main(String[] args) {
+        B b = new B();
+        A a = b; // COMPILATION ERROR!!
+    }
+}
+```
+보다 시피, 위에서 A 와 B 는 완전히 서로 다른 타입이기 때문에 참조변수가 서로 다르기 때문에 B로 선언된 참조변수는 A의 객체를 핸들할 수 없다. 하지만, 만약 
+
+``` java
+public interface A {} // in A.java
+public class B implements A{}  // in B.java
+public class Main {  // in Main.java
+
+    public static void main(String[] args) {
+        B b = new B();
+        A a = b; // IT WORKS FINE!!
+    } 
+}
+```
+위와 같이 B 가 A 를 구현하게 하면, B타입의 참조 변수가 A의 객체를 핸들할 수 있게 된다. 
+그러나 이때에, A 타입으로 선언된 참조변수 b가 B의 객체를 가리키고는 있지만! b의 모든 메소드를 사용할 수는 없다. 
+
+```java
+
+public interface A {
+    public void methodInA();
+}
+
+public class B implements A {
+    public void method_inB(){}
+
+    @Override
+    public void methodInA() {}
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        B b = new B();
+        A a = b;
+        a.methodInA(); // WORKS FINE!
+        a.methodInB(); // BUT ERROR!
+    }
+}
+```
+즉 여기서는 비록  a  가 B  의 객체를 가리키고 있지만, A타입의 참조변수로 선언되었기 때문에 인터페이스 A에 선언된 메소드를 구현한 메소드만 사용할 수 있게 된다. 따라서, 메인 함수에서 ``` A a = b;``` 와 같은 형태로 사용하게 되면 a를 이용해서 인터페이스에서 구현하기로 한 메소드만 사용할 수 있게 되는 것이다. (즉, 사용하기로 약속된 메소드만 사용하게 됨으로써,  월권행위를 방지하고 각 클래스 내의 논리가 한결 간결해진다. )
+
+ 이와 동일한 논리로 **Presenter**에서도 SignUp view만 사용하기 때문에, signUpAcitivity 의 객체를 받지만, **signUpView** 에 정의된 메소드만 사용할 수 있게되어 Presenter는 프레젠터로, 뷰는 뷰로서의 기능에 집중할 수있도록 제약을 받게된다.
+
+``` java
+public class SignUpPresenter {
+
+    private SignUpView signUpView;
+    
+    public SignUpPresenter(SignUpView signUpView) {
+        this.signUpView = signUpView;
+    }
+    public void updateID(String ID) {
+       if(ID.length > 5) //적합한 ID인지 판별
+       {signUpView.enableSignUpButton(true) }
+       else{signUpView.enableSignUpButton(false);}
+}
+```
+보는 바와 
+
+
+
 
 
 
 
  [^designPattern]: [design Pattern](https://stackedit.io/)  소프트웨어 개발 방법에서 사용되는 디자인 패턴은, 프로그램 개발에서 자주 나타나는 과제를 해결하기 위한 방법 중 하나로, 과거의 소프트웨어 개발 과정에서 발견된 설계의 노하우를 축적하여 이름을 붙여, 이후에 재이용하기 좋은 형태로 특정의 규약을 묶어서 정리한 것이다. - 위키피디아.
+
+2. 참조변수에 대한 좋은 설명이 있는 포스트, 
+http://robyncloud.tistory.com/entry/%EC%9E%90%EB%B0%94%EC%97%90%EC%84%9C-%EA%BC%AD-%EC%9D%B4%ED%95%B4%ED%95%B4%EC%95%BC-%EB%90%98%EB%8A%94%EA%B0%9C%EB%85%90-1%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B0%9D%EC%B2%B4-%EC%B0%B8%EC%A1%B0%EB%B3%80%EC%88%98
 
