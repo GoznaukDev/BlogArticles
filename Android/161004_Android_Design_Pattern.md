@@ -196,8 +196,6 @@ public class SignUpPresenter {
        else{signUpView.enableSignUpButton(false);}
 }
 ```
-보는 바와 
-
 
 
 
