@@ -125,7 +125,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
 ```
 답을 발견했는가? 답은 signUpPresenter = new SignUpPresenter(this);에서  확인할 수 있다. 여기서는 그 interface 를 구현한 SignUpActivity 의 객체 자신의 reference variable 이 전달 되는 것을 볼 수 있다.
 
-이렇게 되면, **presenter 에서는 signUpView 형의 참조변수를 이용하여 signUpAcitivity 의 인스턴스를 핸들할 수 있게 된다.** (_이것이 가능한 이유는 signUpActivity 가 signUpView를 implement 했기 떄문이다.  특정 타입의 참조변수는 완전히 다른 클래스타입의 객체를 핸들할 수 없다 상속하거나 그 인터페이스를 구현한 경우는 된다!_)
+이렇게 되면, **presenter 에서는 signUpView 형의 참조변수를 이용하여 signUpAcitivity 의 인스턴스를 핸들할 수 있게 된다.** (_이것이 가능한 이유는 signUpActivity 가 signUpView를 implement 했기 떄문이다.  특정 타입의 참조변수는 완전히 다른 클래스타입의 객체를 핸들할 수 없지만, 상속하거나 그 인터페이스를 구현한 경우는 된다!_)
 
 간단한 예를 통해,  이를 이해해보도록 하자.
 ``` java
